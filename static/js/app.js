@@ -91,6 +91,10 @@ function initUpload() {
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading…'; }
     try {
       const res = await fetch('/upload', { method: 'POST', body: fd });
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(`Server error ${res.status}: Upload may have exceeded Vercel's 4.5MB limit, or the server crashed.`);
+      }
       const data = await res.json();
       if (data.success) {
         showToast(data.message, 'success');
