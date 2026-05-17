@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Smart PDF Summarizer{% endblock %}</title>
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='pdfsum.png') }}" type="image/png">
+  <link rel="icon" href="{{ url_for('static', filename='pdfsum.png') }}" type="image/png">
+
+  <meta name="description" content="Upload PDFs, generate AI summaries, extract keywords, create flashcards and chat with your documents.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}" data-demo-mode="{{ 'true' if demo_mode else 'false' }}">
+  <div class="app-shell">
+    {% if current_user.is_authenticated or demo_mode %}
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><i class="fa-solid fa-file-waveform"></i></div>
+        <div>
+          <h1>Smart PDF</h1>
+          <p>AI Summarizer</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('dashboard') }}" {% if request.endpoint == 'dashboard' %}class="active"{% endif %}>
+          <i class="fa-solid fa-gauge-high"></i> Dashboard
+        </a>
+        <a href="{{ url_for('upload') }}" {% if request.endpoint == 'upload' %}class="active"{% endif %}>
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload PDF
+        </a>
+        <a href="{{ url_for('logout') }}">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </a>
+      </nav>
+      <button class="theme-toggle" type="button" data-theme-toggle>
+        <i class="fa-solid fa-circle-half-stroke"></i>
+        <span>Toggle theme</span>
+      </button>
+      {% if demo_mode %}
+      <div class="demo-banner">
+        <i class="fa-solid fa-circle-exclamation"></i> Demo mode — MongoDB unavailable.
+      </div>
+      {% endif %}
+    </aside>
+    {% endif %}
+
+    <main class="main-content {% if not (current_user.is_authenticated or demo_mode) %}auth-layout{% endif %}">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script>
+    window.APP_CONFIG = { demoMode: document.body.dataset.demoMode === 'true' };
+  </script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

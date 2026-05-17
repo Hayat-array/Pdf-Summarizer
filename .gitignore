@@ -1,0 +1,28 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables
+.env
+
+# Flask
+instance/
+.webassets-cache
+
+# User uploaded files
+static/uploads/*
+!static/uploads/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

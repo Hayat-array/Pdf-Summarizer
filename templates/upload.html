@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Upload PDFs | Smart PDF Summarizer{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Upload</p>
+    <h2>Add your PDFs</h2>
+    <p>Drag & drop or browse — text is extracted instantly.</p>
+  </div>
+</section>
+
+<section class="panel upload-panel">
+  <form class="upload-form" id="upload-form" data-upload-form>
+    <div class="dropzone" id="dropzone">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <h3>Drop PDFs here</h3>
+      <p>or click to browse your device</p>
+      <input type="file" name="files" id="pdf-input" accept="application/pdf" multiple hidden>
+    </div>
+    <div class="upload-actions">
+      <button type="submit" class="btn btn-primary" id="upload-btn">
+        <i class="fa-solid fa-upload"></i> Upload files
+      </button>
+      <p class="helper-text"><i class="fa-solid fa-circle-info" style="margin-right:4px;"></i>Max 50 MB per request.</p>
+    </div>
+    <div class="file-list" id="file-list"></div>
+  </form>
+</section>
+{% endblock %}

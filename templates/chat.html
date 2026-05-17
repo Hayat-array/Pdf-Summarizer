@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Chat | Smart PDF Summarizer{% endblock %}
+{% block content %}
+<section class="page-header split-header">
+  <div>
+    <p class="eyebrow">AI Chat</p>
+    <h2>{{ pdf.original_name }}</h2>
+    <p>Ask anything — I'll find the best answer from the document.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('summarize_page', pdf_id=pdf._id) }}">
+    <i class="fa-solid fa-file-lines"></i> Summary
+  </a>
+</section>
+
+<section class="panel chat-panel" data-chat-root data-pdf-id="{{ pdf._id }}">
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-bubble bot">
+      <div class="chat-answer">👋 Hi! Ask me anything about <strong>{{ pdf.original_name }}</strong> and I'll find the best answer from the document.</div>
+    </div>
+  </div>
+  <form class="chat-form" data-chat-form>
+    <input type="text" id="chat-input" name="question"
+      placeholder="e.g. What is the main topic? Who is the author?"
+      autocomplete="off" required>
+    <button type="submit" class="btn btn-primary" id="chat-send-btn">
+      <i class="fa-solid fa-paper-plane"></i> Send
+    </button>
+  </form>
+</section>
+{% endblock %}

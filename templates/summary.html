@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Summary | Smart PDF Summarizer{% endblock %}
+{% block content %}
+<section class="page-header split-header">
+  <div>
+    <p class="eyebrow">Summary workspace</p>
+    <h2>{{ pdf.original_name }}</h2>
+    <p>
+      <span style="color:var(--success);"><i class="fa-solid fa-circle-check"></i> {{ pdf.status }}</span>
+      &nbsp;&middot;&nbsp;{{ pdf.page_count }} pages
+    </p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-secondary" href="{{ url_for('chat_page', pdf_id=pdf._id) }}">
+      <i class="fa-solid fa-comment-dots"></i> Chat with PDF
+    </a>
+    <button class="btn btn-secondary" id="toggle-fullview" title="Toggle full view">
+      <i class="fa-solid fa-expand"></i>
+    </button>
+  </div>
+</section>
+
+<section class="summary-grid" id="summary-grid">
+  <article class="panel summary-main">
+    <div class="summary-controls">
+      <label>
+        Length
+        <select id="summary-length" data-summary-length>
+          <option value="short" {% if summary and summary.length == 'short' %}selected{% endif %}>Short</option>
+          <option value="medium" {% if not summary or summary.length == 'medium' %}selected{% endif %}>Medium</option>
+          <option value="long" {% if summary and summary.length == 'long' %}selected{% endif %}>Long</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="button" data-generate-summary data-pdf-id="{{ pdf._id }}">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate
+      </button>
+      <button class="btn btn-secondary" type="button" data-delete-summary data-pdf-id="{{ pdf._id }}">
+        <i class="fa-solid fa-eraser"></i> Clear summary
+      </button>
+      <button class="btn btn-danger" type="button" data-delete-pdf data-pdf-id="{{ pdf._id }}" title="Delete PDF, summary and chat">
+        <i class="fa-solid fa-trash"></i> Delete PDF
+      </button>
+    </div>
+
+    <div class="summary-text" id="summary-text">
+      {% if summary %}
+        <p>{{ summary.summary_text }}</p>
+      {% else %}
+        <p style="color:var(--muted);">No summary yet. Choose a length and click <strong>Generate</strong>.</p>
+      {% endif %}
+    </div>
+  </article>
+
+  <aside class="panel summary-side">
+    <div style="margin-bottom:20px;">
+      <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:12px;">
+        <i class="fa-solid fa-tags" style="margin-right:6px;color:var(--primary);"></i>Keywords
+      </h3>
+      <div class="tag-list" id="keyword-list">
+        {% if summary and summary.keywords %}
+          {% for keyword in summary.keywords %}
+            <span class="tag">{{ keyword }}</span>
+          {% endfor %}
+        {% else %}
+          <p class="empty-state">Keywords appear after generation.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:12px;">
+        <i class="fa-solid fa-cards-blank" style="margin-right:6px;color:var(--accent);"></i>Flashcards
+        <span style="font-size:0.75rem;font-weight:400;margin-left:6px;">click to flip</span>
+      </h3>
+      <div class="flashcard-list" id="flashcard-list">
+        {% if summary and summary.flashcards %}
+          {% for card in summary.flashcards %}
+          <button type="button" class="flashcard" data-flip-card>
+            <span class="flashcard-front">{{ card.front }}</span>
+            <span class="flashcard-back">{{ card.back }}</span>
+          </button>
+          {% endfor %}
+        {% else %}
+          <p class="empty-state">Flashcards appear after generation.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="export-group">
+      <h3>Export</h3>
+      <div class="button-row">
+        <a class="btn btn-secondary" href="{{ url_for('export_txt', pdf_id=pdf._id) }}">
+          <i class="fa-solid fa-file-lines"></i> TXT
+        </a>
+        <a class="btn btn-secondary" href="{{ url_for('export_json', pdf_id=pdf._id) }}">
+          <i class="fa-solid fa-code"></i> JSON
+        </a>
+      </div>
+    </div>
+  </aside>
+</section>
+{% endblock %}

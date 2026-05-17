@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up | Smart PDF Summarizer{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="auth-copy">
+    <p class="eyebrow">Get started free</p>
+    <h2>Summarize smarter</h2>
+    <p>One dashboard to upload PDFs, generate study notes, and ask questions about any document.</p>
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-bolt" style="color:var(--primary);"></i> Instant text extraction
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-tags" style="color:var(--accent);"></i> Smart keyword detection
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-file-export" style="color:var(--success);"></i> Export to TXT or JSON
+      </div>
+    </div>
+  </div>
+  <form class="auth-form" data-auth-form data-auth-endpoint="{{ url_for('signup') }}">
+    <div style="margin-bottom:8px;">
+      <h3 style="font-size:1.3rem;font-weight:700;color:var(--text-strong);">Create account</h3>
+      <p style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Fill in your details to get started</p>
+    </div>
+    <label>
+      Full name
+      <input type="text" name="username" required placeholder="Jane Doe" id="signup-name">
+    </label>
+    <label>
+      Email address
+      <input type="email" name="email" required placeholder="you@example.com" id="signup-email">
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" required minlength="6" placeholder="At least 6 characters" id="signup-password">
+    </label>
+    <button type="submit" class="btn btn-primary" style="margin-top:4px;" id="signup-btn">
+      <i class="fa-solid fa-user-plus"></i> Create account
+    </button>
+    <p class="auth-switch">Already registered? <a href="{{ url_for('login') }}">Login here</a></p>
+  </form>
+</section>
+{% endblock %}

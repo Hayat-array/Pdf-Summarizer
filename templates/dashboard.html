@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Smart PDF Summarizer{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Overview</p>
+    <h2>Dashboard</h2>
+    <p>Manage your uploads, summaries and activity.</p>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('upload') }}">
+    <i class="fa-solid fa-cloud-arrow-up"></i> Upload PDF
+  </a>
+</section>
+
+<section class="stats-grid">
+  <article class="stat-card">
+    <span>Total PDFs</span>
+    <strong>{{ pdf_count }}</strong>
+  </article>
+  <article class="stat-card">
+    <span>Summaries</span>
+    <strong>{{ summary_count }}</strong>
+  </article>
+  <article class="stat-card">
+    <span>This Month</span>
+    <strong>{{ month_count }}</strong>
+  </article>
+</section>
+
+<section class="dashboard-grid">
+  <article class="panel">
+    <div class="panel-head">
+      <h3><i class="fa-solid fa-file-pdf" style="color:var(--primary);margin-right:8px;"></i>Recent PDFs</h3>
+      <a href="{{ url_for('upload') }}" class="btn btn-secondary" style="padding:7px 12px;font-size:0.8rem;">
+        <i class="fa-solid fa-plus"></i> Add
+      </a>
+    </div>
+    <div class="list-stack">
+      {% for pdf in recent_pdfs %}
+      <a class="list-item" href="{{ url_for('summarize_page', pdf_id=pdf._id) }}">
+        <div>
+          <strong>{{ pdf.original_name }}</strong>
+          <p>{{ pdf.status|default('queued') }} &middot; {{ pdf.page_count|default(0) }} pages</p>
+        </div>
+        <i class="fa-solid fa-chevron-right"></i>
+      </a>
+      {% else %}
+      <p class="empty-state"><i class="fa-solid fa-inbox" style="margin-right:6px;"></i>No PDFs uploaded yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-head">
+      <h3><i class="fa-solid fa-file-lines" style="color:var(--accent);margin-right:8px;"></i>Recent Summaries</h3>
+    </div>
+    <div class="list-stack">
+      {% for summary in recent_summaries %}
+      <a class="list-item" href="{{ url_for('summarize_page', pdf_id=summary.pdf_id) }}">
+        <div>
+          <strong>{{ summary.pdf_name }}</strong>
+          <p>{{ summary.length|default('medium') }} &middot; {{ summary.updated_at[:10] if summary.updated_at else '' }}</p>
+        </div>
+        <i class="fa-solid fa-file-lines"></i>
+      </a>
+      {% else %}
+      <p class="empty-state"><i class="fa-solid fa-sparkles" style="margin-right:6px;"></i>No summaries generated yet.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

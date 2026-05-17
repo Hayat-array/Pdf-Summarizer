@@ -1,0 +1,10 @@
+Flask
+Flask-PyMongo
+Flask-Login
+Werkzeug
+PyPDF2
+pdfplumber
+nltk
+python-dotenv
+bcrypt
+scikit-learn

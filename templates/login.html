@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Login | Smart PDF Summarizer{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="auth-copy">
+    <p class="eyebrow">Smart PDF Summarizer</p>
+    <h2>Welcome back</h2>
+    <p>Log in to upload PDFs, generate AI summaries, and chat with your documents instantly.</p>
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary);"></i> AI-powered summarization
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-comment-dots" style="color:var(--accent);"></i> Chat with any document
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.88rem;">
+        <i class="fa-solid fa-cards-blank" style="color:var(--success);"></i> Auto-generated flashcards
+      </div>
+    </div>
+  </div>
+  <form class="auth-form" data-auth-form data-auth-endpoint="{{ url_for('login') }}">
+    <div style="margin-bottom:8px;">
+      <h3 style="font-size:1.3rem;font-weight:700;color:var(--text-strong);">Sign in</h3>
+      <p style="font-size:0.85rem;color:var(--muted);margin-top:4px;">Enter your credentials to continue</p>
+    </div>
+    <label>
+      Email address
+      <input type="email" name="email" required placeholder="you@example.com" id="login-email">
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" required minlength="6" placeholder="Your password" id="login-password">
+    </label>
+    <button type="submit" class="btn btn-primary" style="margin-top:4px;" id="login-btn">
+      <i class="fa-solid fa-right-to-bracket"></i> Login
+    </button>
+    <p class="auth-switch">New here? <a href="{{ url_for('signup') }}">Create an account</a></p>
+  </form>
+</section>
+{% endblock %}
