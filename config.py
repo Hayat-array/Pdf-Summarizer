@@ -24,7 +24,7 @@ class Config:
 
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
     MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/smart_pdf")
-    UPLOAD_FOLDER = str(BASE_DIR / "static" / "uploads")
+    UPLOAD_FOLDER = "/tmp" if os.environ.get("VERCEL") else str(BASE_DIR / "static" / "uploads")
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     JSON_SORT_KEYS = False
