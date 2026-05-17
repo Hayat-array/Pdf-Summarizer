@@ -924,36 +924,55 @@ def upload() -> Response:
     files = request.files.getlist("files") or request.files.getlist("pdfs")
     if not files:
         return jsonify({"success": False, "message": "Please choose at least one PDF file."}), 400
+    
     uploaded: List[Dict[str, Any]] = []
-    for file_storage in files:
-        original_name = secure_filename(file_storage.filename or "")
-        if not original_name.lower().endswith(".pdf"):
-            continue
-        pdf_id = str(uuid.uuid4())
-        stored_name = f"{pdf_id}.pdf"
-        file_path = BASE_DIR / stored_name
-        file_storage.save(file_path)
-        # Try to extract text immediately to avoid waiting for background processing
-        extracted = extract_pdf_text(str(file_path))
-        status = "done" if extracted.get("text") else "queued"
-        record = {
-            "_id": pdf_id,
-            "user_id": current_user.id,
-            "filename": stored_name,
-            "original_name": original_name,
-            "filepath": str(file_path),
-            "file_size": file_path.stat().st_size,
-            "page_count": int(extracted.get("page_count", 0)),
-            "status": status,
-            "upload_date": now_iso(),
-            "text": extracted.get("text", ""),
-        }
-        Storage.insert("pdfs", record)
-        # Only spawn background processing if extraction yielded no text (e.g., scanned PDFs)
-        if not extracted.get("text"):
-            threading.Thread(target=process_pdf_background, args=(pdf_id, str(file_path)), daemon=True).start()
-        uploaded.append(serialize_document(record) or record)
-    return jsonify({"success": True, "message": f"Uploaded {len(uploaded)} PDF file(s).", "files": uploaded})
+    try:
+        for file_storage in files:
+            original_name = file_storage.filename or ""
+            if not original_name.lower().endswith(".pdf"):
+                continue
+                
+            safe_name = secure_filename(original_name)
+            if not safe_name or not safe_name.lower().endswith(".pdf"):
+                safe_name = f"document_{uuid.uuid4().hex[:6]}.pdf"
+                
+            pdf_id = str(uuid.uuid4())
+            stored_name = f"{pdf_id}.pdf"
+            file_path = BASE_DIR / stored_name
+            file_storage.save(file_path)
+            
+            # Extract text
+            extracted = extract_pdf_text(str(file_path))
+            status = "done" if extracted.get("text") else "queued"
+            
+            record = {
+                "_id": pdf_id,
+                "user_id": current_user.id,
+                "filename": stored_name,
+                "original_name": original_name,
+                "filepath": str(file_path),
+                "file_size": file_path.stat().st_size if file_path.exists() else 0,
+                "page_count": int(extracted.get("page_count", 0)),
+                "status": status,
+                "upload_date": now_iso(),
+                "text": extracted.get("text", ""),
+            }
+            Storage.insert("pdfs", record)
+            
+            # If extraction yielded no text, process it. 
+            # On Vercel, we must do this synchronously because background threads are frozen.
+            if not extracted.get("text"):
+                if os.environ.get("VERCEL"):
+                    process_pdf_background(pdf_id, str(file_path))
+                else:
+                    threading.Thread(target=process_pdf_background, args=(pdf_id, str(file_path)), daemon=True).start()
+                    
+            uploaded.append(serialize_document(record) or record)
+            
+        return jsonify({"success": True, "message": f"Uploaded {len(uploaded)} PDF file(s).", "files": uploaded})
+    except Exception as e:
+        app.logger.error(f"Upload error: {str(e)}")
+        return jsonify({"success": False, "message": f"Server processing error: {str(e)}"}), 500
 
 
 @app.route("/summarize/<pdf_id>")
